@@ -1,0 +1,6 @@
+{
+  "name": "ZenvyWear — Luxury Women's Fashion",
+  "description": "Elegance in Every Wear. Premium Bangladeshi women's fashion featuring luxury three-pieces, two-pieces, sarees, and kurtis with bKash/Nagad checkout and 3D couture showcase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
