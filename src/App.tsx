@@ -57,12 +57,20 @@ import { PoliciesPage } from './components/pages/PoliciesPage';
 // Admin Portal
 import { AdminDashboard } from './components/admin/AdminDashboard';
 
+// Customer Authentication & Profile
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { CustomerAuthModal } from './components/auth/CustomerAuthModal';
+import { CustomerProfileModal } from './components/auth/CustomerProfileModal';
+
 import { api } from './services/api';
 
-export default function App() {
+function AppContent() {
   // Navigation View: 'home' | 'shop' | 'checkout' | 'confirmation' | 'about' | 'contact' | 'policies'
   const [activeView, setActiveView] = useState<string>('home');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<ProductCategory | 'All'>('All');
+
+  // Customer Auth
+  const { isAuthenticated, openAuthModal, redirectIntent, setRedirectIntent } = useAuth();
 
   // Core Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -161,10 +169,24 @@ export default function App() {
     setToastMessage(`Added "${product.name}" (${size}) to your shopping bag.`);
   };
 
+  // Auto-redirect to checkout when customer signs in with checkout intent
+  useEffect(() => {
+    if (isAuthenticated && redirectIntent === 'checkout') {
+      setRedirectIntent(null);
+      setActiveView('checkout');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isAuthenticated, redirectIntent, setRedirectIntent]);
+
   const handleBuyNow = (product: Product, size: ProductSize, quantity = 1) => {
     handleAddToCart(product, size, quantity);
-    setActiveView('checkout');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!isAuthenticated) {
+      setRedirectIntent('checkout');
+      openAuthModal('login', 'Please sign in or create an account to proceed to checkout.');
+    } else {
+      setActiveView('checkout');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleUpdateCartQuantity = (productId: string, size: string, newQuantity: number) => {
@@ -482,6 +504,25 @@ export default function App() {
         onClose={() => setToastMessage(null)}
       />
 
+      {/* Customer Authentication Modal (Login / Register / Forgot Password) */}
+      <CustomerAuthModal />
+
+      {/* Customer Profile & Orders Modal */}
+      <CustomerProfileModal
+        onOpenTracking={(orderId) => {
+          setIsTrackingOpen(true);
+        }}
+        onContinueShopping={() => navigateTo('shop')}
+      />
+
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

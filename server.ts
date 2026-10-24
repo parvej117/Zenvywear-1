@@ -76,6 +76,9 @@ let databaseUsers: StoredUser[] = [
     createdAt: '2026-10-01T00:00:00Z',
   },
 ];
+
+let databaseSettings: AdminSettings = { ...DEFAULT_ADMIN_SETTINGS };
+
 let databaseOrders: Order[] = [
   {
     id: 'ZW-2026-8812',

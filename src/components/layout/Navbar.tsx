@@ -219,6 +219,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {link.label}
               </button>
             ))}
+          </div>
+
           {/* Mobile Customer Profile / Sign In */}
           <div className="p-3 bg-[#161616] rounded-xl border border-neutral-800 flex items-center justify-between">
             {currentUser ? (
